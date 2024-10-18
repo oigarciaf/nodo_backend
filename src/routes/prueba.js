@@ -5,7 +5,7 @@ const authController = require('../Controllers/authController');
 
 router.get('/datos', prueba.getData);
 router.post('/registro-usuarios', authController.registerUser);
-router.post('/login', authController.loginUser);
+router.post('/login/custom', authController.loginUser);
 
 
 module.exports = router;

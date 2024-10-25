@@ -1,5 +1,6 @@
+
 CREATE TABLE nodo.TL_Roles (
-    RolID INT PRIMARY KEY,
+    RolID INT IDENTITY(1,1) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Descripcion VARCHAR(200)
 );
@@ -8,7 +9,7 @@ CREATE TABLE nodo.TL_Roles (
 
 
 CREATE TABLE nodo.TL_Ocupaciones (
-    OcupacionID INT PRIMARY KEY,
+    OcupacionID INT IDENTITY(1,1) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Descripcion VARCHAR(200)
 );
@@ -17,7 +18,7 @@ CREATE TABLE nodo.TL_Ocupaciones (
 
 
 CREATE TABLE nodo.TL_Usuarios (
-    UsuarioID INT PRIMARY KEY,
+    UsuarioID INT IDENTITY(1,1)  PRIMARY KEY,
     Primer_nombre VARCHAR(200) NOT NULL,
     Segundo_nombre VARCHAR(200),
     Primer_apellido VARCHAR(200) NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE nodo.TL_Usuarios (
 
 
 CREATE TABLE nodo.TL_RolesUsuarios (
-    RolesUsuarioID INT PRIMARY KEY,
+    RolesUsuarioID INT  IDENTITY(1,1) PRIMARY KEY,
     RolID INT NOT NULL,
     UsuarioID INT NOT NULL,
     Fecha_Asignacion DATE DEFAULT GETDATE(),
@@ -53,7 +54,7 @@ CREATE TABLE nodo.TL_RolesUsuarios (
 
 
 CREATE TABLE nodo.TL_MetodoPagos (
-    MetodoPagosID INT PRIMARY KEY,
+    MetodoPagosID INT IDENTITY(1,1)  PRIMARY KEY,
     Numero_Tarjeta VARCHAR(20) NOT NULL,
     Fecha_Expiracion DATE NOT NULL,
     UsuarioID INT NOT NULL,
@@ -63,7 +64,7 @@ CREATE TABLE nodo.TL_MetodoPagos (
 
 
 CREATE TABLE nodo.TL_Tipo_Prestamo (
-    Tipo_PrestamoID INT PRIMARY KEY,
+    Tipo_PrestamoID INT IDENTITY(1,1) PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,
     Descripcion VARCHAR(200)
 );
@@ -74,7 +75,7 @@ CREATE TABLE nodo.TL_Tipo_Prestamo (
 
 
 CREATE TABLE nodo.TL_Estado_Aprobacion (
-    Estado_AprobacionID INT PRIMARY KEY,
+    Estado_AprobacionID INT IDENTITY(1,1)PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,
     Descripcion VARCHAR(200)
 );
@@ -84,7 +85,7 @@ CREATE TABLE nodo.TL_Estado_Aprobacion (
 
 
 CREATE TABLE nodo.TL_Estado_Cuotas (
-    Estado_CuotaID INT PRIMARY KEY,
+    Estado_CuotaID INT IDENTITY(1,1)  PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,
     Descripcion VARCHAR(200)
 );
@@ -94,7 +95,7 @@ CREATE TABLE nodo.TL_Estado_Cuotas (
 
 
 CREATE TABLE nodo.TL_SolicitudesPrestamos (
-    SolicitudID INT PRIMARY KEY,
+    SolicitudID INT IDENTITY(1,1) PRIMARY KEY,
     Monto DECIMAL(18, 2) NOT NULL,
     Tasa DECIMAL(5, 2) NOT NULL,
     Plazo INT NOT NULL,
@@ -110,7 +111,7 @@ CREATE TABLE nodo.TL_SolicitudesPrestamos (
 
 
 CREATE TABLE nodo.TL_OfertaPrestamos (
-    OfertaID INT PRIMARY KEY,
+    OfertaID INT IDENTITY(1,1) PRIMARY KEY,
     Monto DECIMAL(18, 2) NOT NULL,
     Tasa DECIMAL(5, 2) NOT NULL,
     Plazo INT NOT NULL,
@@ -122,25 +123,8 @@ CREATE TABLE nodo.TL_OfertaPrestamos (
 );
 
 
-
-CREATE TABLE nodo.TL_CuotasPrestamos (
-    CuotaPrestamoID INT PRIMARY KEY,
-    NumeroCuota INT NOT NULL,
-    Monto DECIMAL(18, 2) NOT NULL,
-    Fecha_Vencimiento DATE NOT NULL,
-    ReciboID INT NOT NULL,
-    Estado VARCHAR(50) NOT NULL,
-    SolicitudID INT NOT NULL,
-    FOREIGN KEY (ReciboID) REFERENCES nodo.TL_Recibo(ReciboID),
-    FOREIGN KEY (SolicitudID) REFERENCES nodo.TL_SolicitudesPrestamos(SolicitudID)
-);
-
-
-
-
-
 CREATE TABLE nodo.TL_Recibo (
-    ReciboID INT PRIMARY KEY,
+    ReciboID INT IDENTITY(1,1) PRIMARY KEY,
     Fecha_Emision DATE DEFAULT GETDATE(),
     Monto_Cuota DECIMAL(18, 2) NOT NULL,
     Saldo_Restante DECIMAL(18, 2) DEFAULT 0.00,
@@ -156,7 +140,7 @@ CREATE TABLE nodo.TL_Recibo (
 );
 
 CREATE TABLE nodo.TL_CuotasPrestamos (
-    CuotaPrestamoID INT PRIMARY KEY,
+    CuotaPrestamoID INT IDENTITY(1,1) PRIMARY KEY,
     NumeroCuota INT NOT NULL,
     Monto DECIMAL(18, 2) NOT NULL,
     Fecha_Vencimiento DATE NOT NULL,

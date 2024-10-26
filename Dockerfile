@@ -14,11 +14,13 @@ RUN npm ci --only=production
 COPY . .
 
 # Elimina el archivo .env si existe
-ENV NODE_ENV=production
-ENV PORT=8080
+RUN rm -f .env
+
+# Establece la variable de entorno para el puerto
+ENV PORT=8000
 
 # Expone el puerto que utilizará la aplicación
-EXPOSE 8080
+EXPOSE 8000
 
 
 # Comando para ejecutar la aplicación asegurando que escuche en todas las interfaces

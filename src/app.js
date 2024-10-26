@@ -1,32 +1,8 @@
-/*const express = require('express');
-const { connectDB } = require('./config/database');
-const prueba = require('./routes/prueba');
-const cors = require('cors');
-const app = express();
-
-// Conectar a la base de datos
-connectDB();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Rutas
-app.use('/api', prueba);
-
-app.get('/', (req, res) => {
-    res.json({ message: 'Backend funcionando correctamente' });
-  });
-  
-
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
-*/
 
 const cors = require('cors');
 const express = require('express');
 const { connectDB } = require('./config/database');
-const prueba = require('./routes/prueba');
+const appRoutes = require('./appRoute');
 const PORT = process.env.PORT || 8000;
 const app = express();
 
@@ -54,15 +30,12 @@ app.get('/health', (req, res) => {
 });
 
 // Rutas
-app.use('/api', prueba);
+app.use('/api', appRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Backend funcionando correctamente' });
 });
 
-
-
-//app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
 
 // Función para iniciar el servidor
 const startServer = async () => {

@@ -9,8 +9,8 @@ const quotaStatus = require('../Controllers/QuotaStatusController');
 
 
 router.get('/datos', prueba.getData);
-router.post('/registro-usuarios', authController.registerUser);
-router.post('/custom', authController.loginUser);
+router.post('/register', authController.registerUser);
+router.post('/login', authController.loginUser);
 
 
 module.exports = router;

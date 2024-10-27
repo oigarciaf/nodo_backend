@@ -7,8 +7,8 @@ const { UserRegister, validateSqlInjection } = require('../models/UserValidation
 const axios = require('axios');
 
 exports.registerUser = async (req, res) => {
-  const { email, password, id_rol, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, telefono } = req.body;
-  
+  const { email, password, nombre_completo, apellido_completo } = req.body;
+ 
   // Instanciar el modelo de validación
   const user = new UserRegister(req.body);
   
@@ -40,18 +40,17 @@ exports.registerUser = async (req, res) => {
     const pool = await sql.connect();
     try {
       await pool.request()
-        .input('id_rol', sql.Int, id_rol)
-        .input('primer_nombre', sql.VarChar, primer_nombre)
-        .input('segundo_nombre', sql.VarChar, segundo_nombre)
-        .input('primer_apellido', sql.VarChar, primer_apellido)
-        .input('segundo_apellido', sql.VarChar, segundo_apellido)
-        .input('email', sql.VarChar, email)
-        .input('telefono', sql.VarChar, telefono)
-        .input('active', sql.Bit, true) // Por defecto, el usuario está activo
-        .execute('nodo.insertar_usuario');
+      .input('nombre_completo', sql.VarChar, nombre_completo)
+      .input('apellido_completo', sql.VarChar, apellido_completo)
+      .input('email', sql.VarChar, email)
+      .execute('nodo.insertar_usuarios');
 
       // Devolver una respuesta exitosa si todo va bien
-      res.json({ success: true, message: "Usuario registrado exitosamente" });
+      res.json({
+          success: true,
+          message: "Usuario registrado exitosamente",
+          uid:userRecord.uid
+         });
     } catch (error) {
       // Si hay un error, eliminar el usuario creado en Firebase
       await admin.auth().deleteUser(userRecord.uid);
@@ -80,7 +79,7 @@ exports.loginUser = async (req, res) => {
     // Obtener información del usuario de la base de datos
     const result = await pool.request()
       .input('email', sql.VarChar, email)
-      .query('SELECT email, primer_nombre, primer_apellido, active FROM nodo.Usuarios WHERE email = @email');
+      .query('SELECT email, primer_nombre, primer_apellido, active FROM nodo.TL_Usuarios WHERE email = @email');
 
     if (result.recordset.length > 0) {
       const user = result.recordset[0];

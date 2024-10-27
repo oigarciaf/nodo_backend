@@ -10,12 +10,14 @@ const routesOcupation = require('./routes/routesOcupation');
 const routesLoanType = require('./routes/routesLoanType');
 const routesApprovalStatus = require('./routes/routesApprovalStatus');
 const routesQuotaStatus = require('./routes/routesQuotaStatus');
+const routesPaymentMethod = require('./routes/routesPaymentMethod');
 
-router.use('/login', routesLogin);
+router.use('/user', routesLogin);
 router.use('/ocupation', routesOcupation);
 router.use('/loanType', routesLoanType);
 router.use('/approvalStatus', routesApprovalStatus);
 router.use('/quotaStatus', routesQuotaStatus);
+router.use('/paymentMethod', routesPaymentMethod);
 
 
 module.exports = router;

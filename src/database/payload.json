@@ -1,0 +1,18 @@
+/**Reistro*/
+
+post =  http://localhost:8000/api/user/login
+
+{
+    "email":"junior.vaca@unah.hn",
+   "password" :"Junior@2412"
+    
+  }
+
+post = http://localhost:8000/api/user/register
+
+{
+    "email": "junior.vaca@unah.hn",
+    "password": "Junior@2412",
+    "nombre_completo": "Junior",
+    "apellido_completo":"garcia"
+ }

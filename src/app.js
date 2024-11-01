@@ -5,12 +5,15 @@ const { connectDB } = require('./config/database');
 const appRoutes = require('./appRoute');
 const PORT = process.env.PORT || 8000;
 const app = express();
-
+require('./config/firebase');
 // Conectar a la base de datos
 
 // Configuración específica de CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // Permitir solo solicitudes desde tu frontend
+    origin: [
+        'http://localhost:3000',
+        'https://ui-nodo-dev.azurewebsites.net'
+    ],// Permitir solo solicitudes desde tu frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
     allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control'], // Encabezados permitidos
     credentials: true // Permitir el envío de cookies o autenticación HTTP

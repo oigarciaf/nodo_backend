@@ -14,8 +14,8 @@ az acr login --name acrnododev
 
 # Etiquetar la imagen para subirla al registro
 docker tag nodo-api-dev:latest acrnododev.azurecr.io/nodo-api-dev:latest
-docker tag nodo-api-dev:latest acrnododev.azurecr.io/nodo-api-dev:0.0.0
+docker tag nodo-api-dev:latest acrnododev.azurecr.io/nodo-api-dev:0.1.2
 
 # Subir las imágenes al registro
 docker push acrnododev.azurecr.io/nodo-api-dev:latest
-docker push acrnododev.azurecr.io/nodo-api-dev:0.0.0
+docker push acrnododev.azurecr.io/nodo-api-dev:0.1.2

@@ -10,8 +10,8 @@ const axios = require('axios');
 const { getAuth } = require('firebase-admin/auth');
 
 // Configuración del token
-const SECRET_KEY = process.env.JWT_SECRET; // Configura una clave secreta en tu .env
-const RESET_EXPIRATION = '1h'; // Tiempo de expiración del enlace (1 hora en este caso)
+const SECRET_KEY = process.env.JWT_SECRET; // Configura una clave secreta en .env
+const RESET_EXPIRATION = '1h'; 
 
 
 
@@ -102,6 +102,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -117,15 +118,29 @@ exports.loginUser = async (req, res) => {
     const pool = await sql.connect();
     
     // Obtener información del usuario de la base de datos
-    const result = await pool.request()
+    const userResult = await pool.request()
       .input('email', sql.VarChar, email)
-      .query('SELECT UsuarioID, primer_nombre, primer_apellido, active, email FROM nodo.TL_Usuarios WHERE email = @email');
+      .query('SELECT UsuarioID, UsuarioID, primer_nombre, primer_apellido, active, email FROM nodo.TL_Usuarios WHERE email = @email');
 
-    if (result.recordset.length > 0) {
-      const user = result.recordset[0];
+    if (userResult.recordset.length > 0) {
+      const user = userResult.recordset[0];
       
       // Crear el token JWT con los datos del usuario
-      const token = createJwtToken(user.UsuarioID, user.primer_nombre, user.primer_apellido, user.email, user.active);
+
+      // Obtener el rol del usuario desde la tabla TL_RolesUsuarios
+      const roleResult = await pool.request()
+        .input('UsuarioID', sql.Int, user.UsuarioID)
+        .query(`
+          SELECT R.Nombre as role
+          FROM nodo.TL_RolesUsuarios RU
+          JOIN nodo.TL_Roles R ON RU.RolID = R.RolID
+          WHERE RU.UsuarioID = @UsuarioID
+        `);
+
+      const role = roleResult.recordset.length > 0 ? roleResult.recordset[0].role : null;
+
+      // Crear el token JWT incluyendo el rol
+      const token = createJwtToken(user.UsuarioID, user.primer_nombre, user.primer_apellido, user.email, user.active, role);
 
       res.json({
         message: "Usuario autenticado exitosamente",
@@ -139,62 +154,6 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-exports.resetPassword = async (req, res) => {
-  const { token, newPassword } = req.body;
-  try {
-      // Verificar el token
-      const email = await exports.verifyResetToken(token);
-
-      // Actualizar la contraseña en Firebase o tu base de datos
-      const userRecord = await admin.auth().getUserByEmail(email);
-      await admin.auth().updateUser(userRecord.uid, { password: newPassword });
-
-      res.json({ success: true, message: "Contraseña actualizada exitosamente" });
-  } catch (error) {
-      res.status(400).json({ error: `Error al actualizar la contraseña: ${error.message}` });
-  }
-};
-
-
-/*
-// Opción 1: Usando Firebase directamente (RECOMENDADA)
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    // Genera un enlace de restablecimiento de contraseña
-    const link = await getAuth()
-      .generatePasswordResetLink(email);
-
-    // Configurar el correo electrónico
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Restablecimiento de contraseña",
-      text: `Haz clic en el siguiente enlace para restablecer tu contraseña: ${link}`,
-      html: `
-        <h2>Restablecimiento de contraseña</h2>
-        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="${link}">${link}</a>
-        <p>Este enlace expirará en 1 hora.</p>
-        <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
-      `
-    };
-
-    // Enviar el correo usando tu servicio de correo
-    await transporter.sendMail(mailOptions);
-
-    res.json({
-      success: true,
-      message: "Correo de restablecimiento de contraseña enviado exitosamente"
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(400).json({ 
-      error: `Error al procesar la solicitud de restablecimiento: ${error.message}` 
-    });
-  }
-};*/
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;

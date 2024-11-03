@@ -18,7 +18,7 @@ function generatePkceChallenge(verifier) {
 }
 
 // Crear JWT Token
-function createJwtToken(UsuarioID, primer_nombre, primer_apellido, email, active) {
+function createJwtToken(UsuarioID, primer_nombre, primer_apellido, email, active, role) {
   const expiration = Math.floor(Date.now() / 1000) + (60 * 60); // 1 hora de expiración
   return jwt.sign(
     {
@@ -28,6 +28,7 @@ function createJwtToken(UsuarioID, primer_nombre, primer_apellido, email, active
       email,
       active,
       exp: expiration,
+      role,
       iat: Math.floor(Date.now() / 1000)
     },
     SECRET_KEY,
@@ -49,7 +50,7 @@ function validateJwt(req, res, next) {
 
   try {
     const payload = jwt.verify(token, SECRET_KEY);
-    const { UsuarioID, email, exp, active, primer_nombre, primer_apellido } = payload;
+    const { UsuarioID, email, exp, active, primer_nombre, primer_apellido, role } = payload;
 
     // Validación de campos requeridos en el token
     if (!UsuarioID || !email || !exp || active === undefined) {
@@ -67,7 +68,7 @@ function validateJwt(req, res, next) {
     }
 
     // Almacena los datos del usuario en req.user para acceso posterior
-    req.user = { UsuarioID, email, primer_nombre, primer_apellido };
+    req.user = { UsuarioID, email, primer_nombre, primer_apellido, role };
     next();
   } catch (error) {
     return res.status(403).json({ detail: "Invalid token or expired token" });

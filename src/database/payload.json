@@ -16,3 +16,85 @@ post = http://localhost:8000/api/user/register
     "nombre_completo": "Junior",
     "apellido_completo":"garcia"
  }
+
+ /* TL_Ocupaciones */
+
+get = http://localhost:8000/api/ocupation/obtener-ocupaciones
+getById = http://localhost:8000/api/ocupation/obtener-ocupacion/2   <-- enviamos ocupacionId
+post = http://localhost:8000/api/ocupation/guardar-ocupacion
+
+{
+  "nombre": "Analista de Datos",
+  "descripcion": "Encargado de analizar e interpretar datos para apoyar la toma de decisiones."
+}
+
+put = http://localhost:8000/api/ocupation/actualizar-ocupacion/5   <-- enviamos ocupacionId
+
+{
+  "nombre": "Mecanico automotriz",
+  "descripcion": "Encargado de reparar y dar mantenimiento a vehiculos."
+}
+
+delete = http://localhost:8000/api/ocupation/eliminar-ocupacion/5   <-- enviamos ocupacionId
+
+/* TL_Tipo_Prestamo */
+
+get = http://localhost:8000/api/loanType/obtener-tipo-prestamo
+getById = http://localhost:8000/api/loanType/obtener-tipo-prestamo/1   <-- enviamos tipo_PrestamoID
+post = http://localhost:8000/api/loanType/guardar-tipo-prestamo
+
+{
+  "nombre": "Préstamo Hipotecario",
+  "descripcion": "Préstamo para la compra de viviendas y terrenos"
+}
+
+put = http://localhost:8000/api/loanType/actualizar-tipo-prestamo/4   <-- enviamos tipo_PrestamoID
+
+{
+  "nombre": "Préstamo Estudiantil",
+  "descripcion": "Préstamo para estudiantes"
+}
+
+delete = http://localhost:8000/api/loanType/eliminar-tipo-prestamo/4   <-- enviamos tipo_PrestamoID
+
+/*  TL_Estado_Aprobacion */
+
+get = http://localhost:8000/api/approvalStatus/obtener-estado-aprobacion
+getById = http://localhost:8000/api/approvalStatus/obtener-estado-aprobacion/2    <-- enviamos estado_aprobacion_id
+
+post = http://localhost:8000/api/approvalStatus/guardar-estado-aprobacion
+
+{
+  "nombre": "Rechazado",
+  "descripcion": "El estado indica que la solicitud ha sido rechazada"
+}
+
+put = http://localhost:8000/api/approvalStatus/actualizar-estado-aprobacion/4    <-- enviamos estado_aprobacion_id
+
+{
+  "nombre": "Pendiente",
+  "descripcion": "El estado indica que la solicitud ha sido rechazada"
+}
+
+delete = http://localhost:8000/api/approvalStatus/eliminar-estado-aprobacion/4   <-- enviamos estado_aprobacion_id
+
+/* TL_Estado_Cuotas */
+
+get = http://localhost:8000/api/quotaStatus/obtener-estado-cuota
+getById = http://localhost:8000/api/quotaStatus/obtener-estado-cuota/1   <-- enviamos estadoCuotaID
+
+post = http://localhost:8000/api/quotaStatus/guardar-estado-cuota
+
+{
+  "nombre": "Pagado",
+  "descripcion": "Indica que la cuota ha sido pagada completamente"
+}
+
+put = http://localhost:8000/api/quotaStatus/actualizar-estado-cuota/4    <-- enviamos estadoCuotaID
+
+{
+  "nombre": "Pendiente",
+  "descripcion": "Indica que la cuota está pendiente y no ha sido pagada en la fecha acordada"
+}
+
+delete = http://localhost:8000/api/quotaStatus/eliminar-estado-cuota/4   <-- enviamos estadoCuotaID

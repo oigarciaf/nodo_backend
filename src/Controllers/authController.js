@@ -119,11 +119,13 @@ exports.loginUser = async (req, res) => {
     // Obtener información del usuario de la base de datos
     const result = await pool.request()
       .input('email', sql.VarChar, email)
-      .query('SELECT email, primer_nombre, primer_apellido, active FROM nodo.TL_Usuarios WHERE email = @email');
+      .query('SELECT UsuarioID, primer_nombre, primer_apellido, active, email FROM nodo.TL_Usuarios WHERE email = @email');
 
     if (result.recordset.length > 0) {
       const user = result.recordset[0];
-      const token = createJwtToken(user.primer_nombre, user.primer_apellido, user.email, user.active);
+      
+      // Crear el token JWT con los datos del usuario
+      const token = createJwtToken(user.UsuarioID, user.primer_nombre, user.primer_apellido, user.email, user.active);
 
       res.json({
         message: "Usuario autenticado exitosamente",
@@ -133,10 +135,9 @@ exports.loginUser = async (req, res) => {
       res.status(404).json({ error: "Usuario no encontrado" });
     }
   } catch (error) {
-    res.status(400).json({ error: `Error al autenticar usuario: ${error.message}` });
+    res.status(400).json({ error:` Error al autenticar usuario: ${error.message} `});
   }
 };
-
 
 exports.resetPassword = async (req, res) => {
   const { token, newPassword } = req.body;

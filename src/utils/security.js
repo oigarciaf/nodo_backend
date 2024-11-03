@@ -18,15 +18,16 @@ function generatePkceChallenge(verifier) {
 }
 
 // Crear JWT Token
-function createJwtToken(primer_nombre, primer_apellido, email, active) {
+function createJwtToken(UsuarioID, primer_nombre, primer_apellido, email, active) {
   const expiration = Math.floor(Date.now() / 1000) + (60 * 60); // 1 hora de expiración
   return jwt.sign(
     {
+      UsuarioID,          // Agregar UsuarioID al payload
       primer_nombre,
       primer_apellido,
       email,
-      exp: expiration,
       active,
+      exp: expiration,
       iat: Math.floor(Date.now() / 1000)
     },
     SECRET_KEY,
@@ -48,21 +49,25 @@ function validateJwt(req, res, next) {
 
   try {
     const payload = jwt.verify(token, SECRET_KEY);
-    const { email, exp, active, primer_nombre, primer_apellido } = payload;
+    const { UsuarioID, email, exp, active, primer_nombre, primer_apellido } = payload;
 
-    if (!email || !exp || active === undefined) {
+    // Validación de campos requeridos en el token
+    if (!UsuarioID || !email || !exp || active === undefined) {
       return res.status(403).json({ detail: "Invalid token" });
     }
 
+    // Verificación de expiración del token
     if (exp < Math.floor(Date.now() / 1000)) {
       return res.status(403).json({ detail: "Expired token" });
     }
 
+    // Verificación de estado activo del usuario
     if (!active) {
       return res.status(403).json({ detail: "Inactive user" });
     }
 
-    req.user = { email, primer_nombre, primer_apellido };
+    // Almacena los datos del usuario en req.user para acceso posterior
+    req.user = { UsuarioID, email, primer_nombre, primer_apellido };
     next();
   } catch (error) {
     return res.status(403).json({ detail: "Invalid token or expired token" });

@@ -11,11 +11,18 @@ post =  http://localhost:8000/api/user/login
 post = http://localhost:8000/api/user/register
 
 {
-    "email": "junior.vaca@unah.hn",
-    "password": "Junior@2412",
-    "nombre_completo": "Junior",
-    "apellido_completo":"garcia"
+  "email": "hilixay132@regishub.com",
+  "password": "Junior@2412",
+  "nombre_completo": "Junior",
+  "apellido_completo":"garcia",
+  "fecha_nacimiento":"1997-02-25"
  }
+
+ post = http://localhost:8000/api/user/verify
+ {
+  "email":"hilixay132@regishub.com",
+  "verificationCode":"603A9E"
+}
 
  /* TL_Ocupaciones */
 

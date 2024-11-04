@@ -5,6 +5,7 @@ class UserRegister {
   constructor(data) {
     this.nombre_completo = data.nombre_completo;
     this.apellido_completo = data.apellido_completo;
+    this.fecha_nacimiento = data.fecha_nacimiento
     this.email = data.email;
     this.password = data.password;
   }
@@ -15,6 +16,7 @@ class UserRegister {
     // Validación de campos requeridos
     if (!this.nombre_completo) errors.push('nombre_completo is required');
     if (!this.apellido_completo) errors.push('apellido_completo is required');
+    if (!this.fecha_nacimiento) errors.push('fecha_ nacimiento es requerido')
     if (!this.email) errors.push('email is required');
     if (!this.password) errors.push('password is required');
     

@@ -1,5 +1,5 @@
 // src/controllers/authController.js
-const { sql } = require('../config/database');
+const { sql, connectDB, config } = require('../config/database');
 const { createJwtToken } = require('../utils/security');
 const admin = require('../config/firebase');
 const { UserRegister, validateSqlInjection } = require('../models/UserValidation'); 
@@ -8,151 +8,222 @@ const { sendPasswordResetEmail } = require('../utils/emailService');
 const axios = require('axios');
 //const admin = require('firebase-admin');
 const { getAuth } = require('firebase-admin/auth');
-
-// Configuración del token
-const SECRET_KEY = process.env.JWT_SECRET; // Configura una clave secreta en .env
-const RESET_EXPIRATION = '1h'; 
-
-
-
-
-exports.handlePasswordResetRequest = async function(userEmail) {
-  try {
-      // Genera un token JWT con el email del usuario y una expiración
-      const token = jwt.sign({ email: userEmail }, SECRET_KEY, { expiresIn: RESET_EXPIRATION });
-      
-      // Enlace de restablecimiento que apunta a tu frontend y contiene el token
-      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
-      // Envía el correo con el enlace
-      await sendPasswordResetEmail(userEmail, resetLink);
-      
-      console.log("Correo de restablecimiento enviado");
-  } catch (error) {
-      console.error("Error al generar o enviar el enlace de restablecimiento:", error);
-  }
-}
-
-
-exports.verifyResetToken = async function (token) {
-  try {
-      const decoded = jwt.verify(token, SECRET_KEY);
-      return decoded.email; // Devuelve el email si el token es válido
-  } catch (error) {
-      console.error("Token inválido o caducado:", error);
-      throw new Error("Token inválido o caducado");
-  }
-}
-
-
-
-exports.registerUser = async (req, res) => {
-  const { email, password, nombre_completo, apellido_completo } = req.body;
- 
-  // Instanciar el modelo de validación
-  const user = new UserRegister(req.body);
-  
-  // Validar los datos del usuario
-  const validationErrors = user.validate();
-  
-
-  
-  // Si hay errores de validación, devolverlos
-  if (validationErrors.length > 0) {
-    return res.status(400).json({ errors: validationErrors });
-  }
-
-  // Validación adicional para inyección SQL
-  for (let key in req.body) {
-    if (validateSqlInjection(req.body[key])) {
-      return res.status(400).json({ error: 'Posible intento de inyección SQL detectado' });
-    }
-  }
-
-  try {
-    // Crear el usuario en el sistema de autenticación (Firebase por ejemplo)
-    const userRecord = await admin.auth().createUser({
-      email: email,
-      password: password
-    });
-
-    // Conectar a la base de datos y ejecutar el procedimiento almacenado
-    const pool = await sql.connect();
-    try {
-      await pool.request()
-      .input('nombre_completo', sql.VarChar, nombre_completo)
-      .input('apellido_completo', sql.VarChar, apellido_completo)
-      .input('email', sql.VarChar, email)
-      .execute('nodo.insertar_usuarios');
-
-      // Devolver una respuesta exitosa si todo va bien
-      res.json({
-          success: true,
-          message: "Usuario registrado exitosamente",
-          uid:userRecord.uid
-         });
-    } catch (error) {
-      // Si hay un error, eliminar el usuario creado en Firebase
-      await admin.auth().deleteUser(userRecord.uid);
-      throw error;
-    }
-  } catch (error) {
-    // Manejar errores de autenticación o conexión
-    res.status(400).json({ error: `Error al registrar usuario: ${error.message}` });
-  }
-};
+const {generateVerificationCode } = require('../utils/emailService')
+//const {storeVerificationCode} = require('../utils/emailService')
+const {sendVerificationEmail} = require('../utils/emailService')
 
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Autenticación en Firebase
-    const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`, {
-      email: email,
-      password: password,
-      returnSecureToken: true
-    });
-
-    // Conexión a la base de datos
+    // Verificar si el usuario está activo en la base de datos
     const pool = await sql.connect();
-    
-    // Obtener información del usuario de la base de datos
+    const userStatus = await pool.request()
+      .input('email', sql.VarChar, email)
+      .query('SELECT active FROM nodo.TL_Usuarios WHERE email = @email');
+
+    if (userStatus.recordset.length === 0 || !userStatus.recordset[0].active) {
+      return res.status(403).json({ 
+        error: "Por favor verifica tu cuenta antes de iniciar sesión" 
+      });
+    }
+
+    // Proceder con la autenticación en Firebase
+    const response = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+      {
+        email: email,
+        password: password,
+        returnSecureToken: true
+      }
+    );
+
+    // Obtener información del usuario
     const userResult = await pool.request()
       .input('email', sql.VarChar, email)
-      .query('SELECT UsuarioID, UsuarioID, primer_nombre, primer_apellido, active, email FROM nodo.TL_Usuarios WHERE email = @email');
+      .query('SELECT UsuarioID, primer_nombre, primer_apellido, active, email FROM nodo.TL_Usuarios WHERE email = @email');
 
-    if (userResult.recordset.length > 0) {
-      const user = userResult.recordset[0];
-      
-      // Crear el token JWT con los datos del usuario
+    const user = userResult.recordset[0];
+    
+    // Obtener rol del usuario
+    const roleResult = await pool.request()
+      .input('UsuarioID', sql.Int, user.UsuarioID)
+      .query(`
+        SELECT R.Nombre as role
+        FROM nodo.TL_RolesUsuarios RU
+        JOIN nodo.TL_Roles R ON RU.RolID = R.RolID
+        WHERE RU.UsuarioID = @UsuarioID
+      `);
 
-      // Obtener el rol del usuario desde la tabla TL_RolesUsuarios
-      const roleResult = await pool.request()
-        .input('UsuarioID', sql.Int, user.UsuarioID)
-        .query(`
-          SELECT R.Nombre as role
-          FROM nodo.TL_RolesUsuarios RU
-          JOIN nodo.TL_Roles R ON RU.RolID = R.RolID
-          WHERE RU.UsuarioID = @UsuarioID
-        `);
+    const role = roleResult.recordset.length > 0 ? roleResult.recordset[0].role : null;
 
-      const role = roleResult.recordset.length > 0 ? roleResult.recordset[0].role : null;
+    // Crear token JWT
+    const token = createJwtToken(
+      user.UsuarioID, 
+      user.primer_nombre, 
+      user.primer_apellido, 
+      user.email, 
+      user.active, 
+      role
+    );
 
-      // Crear el token JWT incluyendo el rol
-      const token = createJwtToken(user.UsuarioID, user.primer_nombre, user.primer_apellido, user.email, user.active, role);
-
-      res.json({
-        message: "Usuario autenticado exitosamente",
-        idToken: token
-      });
-    } else {
-      res.status(404).json({ error: "Usuario no encontrado" });
-    }
+    res.json({
+      message: "Usuario autenticado exitosamente",
+      idToken: token
+    });
   } catch (error) {
-    res.status(400).json({ error:` Error al autenticar usuario: ${error.message} `});
+    res.status(400).json({ 
+      error: `Error al autenticar usuario: ${error.message}` 
+    });
   }
 };
+
+exports.registerUser = async (req, res) => {
+  const { email, password, nombre_completo, apellido_completo, fecha_nacimiento } = req.body;
+
+  // Instanciar el modelo de validación
+  const user = new UserRegister(req.body);
+  
+  // Validar los datos del usuario
+  const validationErrors = user.validate();
+  if (validationErrors.length > 0) {
+    return res.status(400).json({ errors: validationErrors });
+  }
+
+  try {
+    // Crear el usuario en Firebase
+    const userRecord = await admin.auth().createUser({ email, password });
+
+    // Generar el código de verificación
+    const verificationCode = generateVerificationCode();
+    const expirationDate = new Date(Date.now() + 15 * 60 * 1000); // Código expira en 15 minutos
+
+    // Conectar a la base de datos y ejecutar el procedimiento de inserción de usuario
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('nombre_completo', sql.VarChar, nombre_completo)
+      .input('apellido_completo', sql.VarChar, apellido_completo)
+      .input('email', sql.VarChar, email)
+      .input('fecha_nacimiento', sql.Date, new Date(fecha_nacimiento))
+      .execute('nodo.SP_InsertarUsuarios');
+    
+    const { UsuarioID } = result.recordset[0];
+
+    // Guardar el código de verificación en la tabla TL_Verificacion
+    await pool.request()
+      .input('UsuarioID', sql.Int, UsuarioID)
+      .input('Codigo', sql.VarChar, verificationCode)
+      .input('Fecha_Expiracion', sql.DateTime, expirationDate)
+      .query('INSERT INTO nodo.TL_Verificacion (UsuarioID, Codigo, Fecha_Expiracion) VALUES (@UsuarioID, @Codigo, @Fecha_Expiracion)');
+
+    // Enviar el código de verificación al correo del usuario
+    await sendVerificationEmail(email, verificationCode);
+
+    res.json({ success: true, message: 'Usuario registrado exitosamente. Verifique su correo para activar la cuenta.' });
+  } catch (error) {
+    res.status(400).json({ error: `Error al registrar usuario: ${error.message}` });
+  }
+};
+
+
+
+
+
+//////////////////////
+/*
+exports.verifyEmail = async (req, res) => {
+  const { email, code } = req.body;
+
+  try {
+    const pool = await sql.connect();
+    
+    // Verificar el código
+    const result = await pool.request()
+      .input('email', sql.VarChar, email)
+      .input('code', sql.VarChar, code)
+      .query(`
+        SELECT * FROM nodo.TL_VerificationCodes 
+        WHERE email = @email 
+        AND code = @code 
+        AND expiration_date > GETDATE()
+        AND used = 0
+      `);
+
+    if (result.recordset.length === 0) {
+      return res.status(400).json({ error: "Código inválido o expirado" });
+    }
+
+    // Actualizar estado de verificación
+    await pool.request()
+      .input('email', sql.VarChar, email)
+      .query(`
+        UPDATE nodo.TL_Usuarios 
+        SET active = 1 
+        WHERE email = @email
+      `);
+
+    // Marcar código como usado
+    await pool.request()
+      .input('email', sql.VarChar, email)
+      .input('code', sql.VarChar, code)
+      .query(`
+        UPDATE nodo.TL_VerificationCodes 
+        SET used = 1 
+        WHERE email = @email AND code = @code
+      `);
+
+    // Actualizar estado en Firebase
+    const userRecord = await admin.auth().getUserByEmail(email);
+    await admin.auth().updateUser(userRecord.uid, {
+      emailVerified: true
+    });
+
+    res.json({ 
+      success: true, 
+      message: "Email verificado exitosamente" 
+    });
+  } catch (error) {
+    res.status(400).json({ error: `Error al verificar email: ${error.message}` });
+  }
+};*/
+
+exports.verifyUser = async (req, res) => {
+  const { email, verificationCode } = req.body;
+
+  try {
+    const pool = await sql.connect();
+
+    // Obtener el usuario y verificar el código
+    const userResult = await pool.request()
+      .input('email', sql.VarChar, email)
+      .query(`
+        SELECT u.UsuarioID, v.Codigo, v.Fecha_Expiracion 
+        FROM nodo.TL_Usuarios u
+        JOIN nodo.TL_Verificacion v ON u.UsuarioID = v.UsuarioID 
+        WHERE u.Email = @email
+      `);
+
+    if (userResult.recordset.length === 0) {
+      return res.status(400).json({ error: 'Usuario no encontrado o código incorrecto.' });
+    }
+
+    const { UsuarioID, Codigo, Fecha_Expiracion } = userResult.recordset[0];
+    if (verificationCode !== Codigo || new Date() > Fecha_Expiracion) {
+      return res.status(400).json({ error: 'Código incorrecto o expirado.' });
+    }
+
+    // Activar el usuario
+    await pool.request()
+      .input('UsuarioID', sql.Int, UsuarioID)
+      .query('UPDATE nodo.TL_Usuarios SET active = 1 WHERE UsuarioID = @UsuarioID');
+
+    res.json({ success: true, message: 'Cuenta activada exitosamente. Ahora puede iniciar sesión.' });
+  } catch (error) {
+    res.status(500).json({ error: `Error al verificar el código: ${error.message}` });
+  }
+};
+
 
 
 exports.forgotPassword = async (req, res) => {

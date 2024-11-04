@@ -1,6 +1,7 @@
 // utils/security.js
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const { Token } = require('tedious/lib/token/token');
 require('dotenv').config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -18,11 +19,13 @@ function generatePkceChallenge(verifier) {
 }
 
 // Crear JWT Token
+console.log("SECRET_KEY:", SECRET_KEY);
+
 function createJwtToken(UsuarioID, primer_nombre, primer_apellido, email, active, role) {
   const expiration = Math.floor(Date.now() / 1000) + (60 * 60); // 1 hora de expiración
   return jwt.sign(
     {
-      UsuarioID,          // Agregar UsuarioID al payload
+      UsuarioID,          
       primer_nombre,
       primer_apellido,
       email,
@@ -49,7 +52,10 @@ function validateJwt(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(token, SECRET_KEY);
+    const payload = jwt.verify(token, SECRET_KEY, { algorithms: 'HS256' });
+    console.log('Token valido', payload);
+
+
     const { UsuarioID, email, exp, active, primer_nombre, primer_apellido, role } = payload;
 
     // Validación de campos requeridos en el token
@@ -71,6 +77,7 @@ function validateJwt(req, res, next) {
     req.user = { UsuarioID, email, primer_nombre, primer_apellido, role };
     next();
   } catch (error) {
+    console.log('Token invalido:', error.message );
     return res.status(403).json({ detail: "Invalid token or expired token" });
   }
 }

@@ -105,3 +105,20 @@ put = http://localhost:8000/api/quotaStatus/actualizar-estado-cuota/4    <-- env
 }
 
 delete = http://localhost:8000/api/quotaStatus/eliminar-estado-cuota/4   <-- enviamos estadoCuotaID
+
+
+/* TL_SolicitudesPrestamos */
+get = http://localhost:8000/api/loanRequest/obtener-solicitud/3  <-- enviamos solicitudId
+get = http://localhost:8000/api/loanRequest/obtener-solicitud
+post = http://localhost:8000/api/loanRequest/crear-solicitud
+
+{
+  "monto": 10000.00,
+  "tasa": 3.50,
+  "plazo": 24,
+  "saldo_pendiente": 10000.00,
+  "estado_aprobacionid": 1,
+  "tipo_prestamoid": 1,
+  "usuarioId": 70,
+  "prestamistaId": 68
+}

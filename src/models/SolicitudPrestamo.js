@@ -4,12 +4,12 @@ class SolicitudPrestamo {
         this.monto = solicitud.monto;
         this.tasa = solicitud.tasa;
         this.plazo = solicitud.plazo;
-        this.estado = solicitud.estado;
-        this.tipo_prestamo = solicitud.tipo_prestamo;
+        this.estado_aprobacionid = solicitud.estado_aprobacionid;
+        this.tipo_prestamoid = solicitud.tipo_prestamoid;
         this.usuarioId = solicitud.usuarioId;
         this.prestamistaId = solicitud.prestamistaId;
     }
 }
 
-module.exports = {SolicitudPrestamo};
+module.exports = SolicitudPrestamo;
 

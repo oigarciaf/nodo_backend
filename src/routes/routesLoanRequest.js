@@ -14,6 +14,7 @@ router.delete('/solicitud/:id', solicitudPrestamoController.eliminar); */
 router.post('/crear-solicitud', loanRequest.insertLoanRequest);
 router.get('/obtener-solicitud', loanRequest.getAllLoanRequests);
 router.get('/obtener-solicitud/:solicitudId', loanRequest.getLoanRequestById);
+router.get('/obtener-solicitud-pendientes', loanRequest.getPendingLoanRequests);
 
 
 module.exports = router;

@@ -122,3 +122,5 @@ post = http://localhost:8000/api/loanRequest/crear-solicitud
   "usuarioId": 70,
   "prestamistaId": 68
 }
+
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes <-- solicitudes pendientes

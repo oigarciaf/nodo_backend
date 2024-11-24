@@ -105,4 +105,23 @@ exports.getLoanRequestById = async (req, res) => {
       });
     }
   };
+
+
+  exports.getPendingLoanRequests = async (req, res) => {
+    try {
+      // Conectar a la base de datos y ejecutar el procedimiento almacenado
+      const pool = await sql.connect();
+      const result = await pool.request()
+        .execute('nodo.SP_Obtener_Solicitudes_Pendientes'); // Nombre del nuevo procedimiento
+  
+      // Enviar los resultados en la respuesta
+      res.json(result.recordset);
+    } catch (error) {
+      // Manejo de errores de SQL Server
+      res.status(500).json({ 
+        error: `Error al consultar las solicitudes de préstamo pendientes: ${error.message}` 
+      });
+    }
+  };
+  
   

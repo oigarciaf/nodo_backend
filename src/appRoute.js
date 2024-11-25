@@ -12,6 +12,7 @@ const routesApprovalStatus = require('./routes/routesApprovalStatus');
 const routesQuotaStatus = require('./routes/routesQuotaStatus');
 const routesPaymentMethod = require('./routes/routesPaymentMethod');
 const routesLoanRequest= require('./routes/routesLoanRequest')
+const routesLoanOffer = require('./routes/routesLoanOffer');
 
 router.use('/user', routesLogin);
 router.use('/ocupation', routesOcupation);
@@ -20,6 +21,7 @@ router.use('/approvalStatus', routesApprovalStatus);
 router.use('/quotaStatus', routesQuotaStatus);
 router.use('/paymentMethod', routesPaymentMethod);
 router.use('/loanRequest', routesLoanRequest);
+router.use('/loanOffer', routesLoanOffer);
 
 
 module.exports = router;

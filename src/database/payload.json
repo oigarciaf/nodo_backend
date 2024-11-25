@@ -125,3 +125,39 @@ post = http://localhost:8000/api/loanRequest/crear-solicitud
 
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes <-- solicitudes pendientes
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes/70 <-- enviamos usuarioId
+
+===============================================================================
+Oferta
+===============================================================================
+
+post = http://localhost:8000/api/loanOffer/crear-oferta
+
+    {
+      "monto": 1000.25,
+      "tasa": 10.5,
+      "plazo": 12,
+      "solicitudId": 28,
+      "prestamistaId": 33
+    }
+
+put = http://localhost:8000/api/loanOffer/actualizar/9
+
+      {
+        "OfertaID":"9",
+        "monto": 1000.25,
+        "tasa": 10.5,
+        "plazo": 12,
+        "solicitudId": 28,
+        "prestamistaId": 33,
+        "estadoAprobacionId": 2
+        
+      }
+
+
+get = http://localhost:8000/api/loanOffer/ofertas     todas las  ofertas
+get = http://localhost:8000/api/loanOffer/ofertas/9    <-- ofertas por id
+get = http://localhost:8000/api/loanOffer/ofertas/estado/2  <-- ofertas por estado
+
+
+
+

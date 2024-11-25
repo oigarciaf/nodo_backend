@@ -157,6 +157,7 @@ put = http://localhost:8000/api/loanOffer/actualizar/9
 get = http://localhost:8000/api/loanOffer/ofertas     todas las  ofertas
 get = http://localhost:8000/api/loanOffer/ofertas/9    <-- ofertas por id
 get = http://localhost:8000/api/loanOffer/ofertas/estado/2  <-- ofertas por estado
+get = http://localhost:8000/api/loanOffer/ofertas/prestamista/33 ofertas por usuario prestamista
 
 
 

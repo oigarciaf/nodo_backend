@@ -88,6 +88,18 @@ class OfertaPrestamo {
         }
     }
 
+    async listarPorPrestamista(prestamistaId) {
+        try {
+            const pool = await this.sql.connect();
+            const result = await pool.request()
+                .input('PrestamistaID', this.sql.Int, prestamistaId)
+                .execute('nodo.SP_ListarOfertasPorPrestamista');
+            return result.recordset;
+        } catch (error) {
+            throw new Error(`Error al listar ofertas del prestamista: ${error.message}`);
+        }
+    }
+
 
 };
 

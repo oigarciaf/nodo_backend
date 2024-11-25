@@ -62,7 +62,56 @@ const offerLoan = {
         } catch (error) {
             res.status(500).json({ success: false, error: error.message });
         }
+    },
+
+
+    async listarPorPrestamista(req, res) {
+        try {
+            // Obtener el ID del prestamista desde el token JWT o parámetro
+            const prestamistaId = req.params.prestamistaId;
+            
+            // Validar que el prestamistaId existe
+            if (!prestamistaId) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Se requiere el ID del prestamista' 
+                });
+            }
+
+            const ofertas = await ofertaPrestamoModel.listarPorPrestamista(prestamistaId);
+            
+            // Transformar los datos si es necesario
+            const ofertasFormateadas = ofertas.map(oferta => ({
+                id: oferta.OfertaID,
+                monto: oferta.Monto,
+                tasa: oferta.Tasa,
+                plazo: oferta.Plazo,
+                estadoAprobacion: oferta.EstadoAprobacion,
+                solicitud: {
+                    id: oferta.SolicitudID,
+                    monto: oferta.MontoSolicitado,
+                    plazo: oferta.PlazoSolicitado,
+                    tasa: oferta.TasaSolicitada
+                },
+                solicitante: {
+                    nombre: `${oferta.Primer_nombre} ${oferta.Primer_apellido}`,
+                    email: oferta.Email
+                }
+            }));
+
+            res.json({ 
+                success: true, 
+                data: ofertasFormateadas,
+                total: ofertasFormateadas.length
+            });
+        } catch (error) {
+            res.status(500).json({ 
+                success: false, 
+                error: error.message 
+            });
+        }
     }
+
 
 };
 

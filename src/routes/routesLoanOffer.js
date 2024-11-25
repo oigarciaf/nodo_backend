@@ -11,8 +11,8 @@ router.delete('/eliminar/:id', offerLoan.eliminar);
 router.put('/actualizar/:id', offerLoan.actualizar);
 router.get('/ofertas/:id', offerLoan.obtenerPorId);
 router.get('/ofertas', offerLoan.listarTodas);
-router.get('/ofertas/estado/:estadoId', offerLoan.listarPorEstado )
-
+router.get('/ofertas/estado/:estadoId', offerLoan.listarPorEstado );
+router.get('/ofertas/prestamista/:prestamistaId', offerLoan.listarPorPrestamista)
 
 
 

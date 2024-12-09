@@ -20,5 +20,6 @@ router.post('/crear-cuotas', loanRequest.insertLoanRequestWithInstallments);
 router.post('/obtener-cuotas', loanRequest.getLoanInstallmentsByStatusAndRequest);
 router.post('/realizar-pago', loanRequest.payLoanInstallment);
 router.get('/obtener-cuotas/:SolicitudID', loanRequest.getInstallmentsByRequest);
+router.get('/obtener-recibo/:CuotaPrestamoID', loanRequest.getReceiptByInstallment);
 
 module.exports = router;

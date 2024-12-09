@@ -307,6 +307,29 @@ exports.getInstallmentsByRequest = async (req, res) => {
 };
 
 
+exports.getReceiptByInstallment = async (req, res) => {
+  try {
+    const { CuotaPrestamoID } = req.params; // Obtener el parámetro de la solicitud (CuotaPrestamoID)
+
+    if (!CuotaPrestamoID) {
+      return res.status(400).json({ error: 'CuotaPrestamoID es requerido.' });
+    }
+
+    // Conectar a la base de datos y ejecutar el procedimiento almacenado
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('CuotaPrestamoID', sql.Int, CuotaPrestamoID) // Enviar el parámetro al procedimiento
+      .execute('nodo.SP_ObtenerReciboPorCuota'); // Nombre del procedimiento almacenado
+
+    // Enviar los resultados en la respuesta
+    res.json(result.recordset);
+  } catch (error) {
+    // Manejo de errores de SQL Server
+    res.status(500).json({ 
+      error: `Error al consultar el recibo por cuota: ${error.message}` 
+    });
+  }
+};
 
 
 

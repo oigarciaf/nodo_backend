@@ -141,8 +141,12 @@ post = http://localhost:8000/api/loanRequest/crear-cuotas
   "usuarioId": 79,
   "prestamistaId": 55
 }
-
-
+/* Cuotas por pagar de un prestamo*/
+post = http://localhost:8000/api/loanRequest/obtener-cuotas
+{
+  "SolicitudID": 32,
+  "Estado_CuotaID": 2   
+}
 
 
 ===============================================================================

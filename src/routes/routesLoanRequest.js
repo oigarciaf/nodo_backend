@@ -17,5 +17,6 @@ router.get('/obtener-solicitud/:solicitudId', loanRequest.getLoanRequestById);
 router.get('/obtener-solicitud-pendientes', loanRequest.getPendingLoanRequests);
 router.get('/obtener-solicitud-pendientes/:usuarioId', loanRequest.getFilteredLoanRequests);
 router.post('/crear-cuotas', loanRequest.insertLoanRequestWithInstallments);
+router.post('/obtener-cuotas', loanRequest.getLoanInstallmentsByStatusAndRequest);
 
 module.exports = router;

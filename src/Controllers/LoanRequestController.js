@@ -204,4 +204,35 @@ exports.insertLoanRequestWithInstallments = async (req, res) => {
   }
 };
 
+
+exports.getLoanInstallmentsByStatusAndRequest = async (req, res) => {
+  const { SolicitudID, Estado_CuotaID } = req.body; // Obtener parámetros del cuerpo de la solicitud
+
+  // Validar los parámetros
+  if (!SolicitudID) {
+      return res.status(400).json({ error: 'El parámetro SolicitudID es obligatorio.' });
+  }
+
+  try {
+      // Conectar a la base de datos y ejecutar el procedimiento almacenado
+      const pool = await sql.connect();
+      const result = await pool.request()
+          .input('SolicitudID', sql.Int, SolicitudID)
+          .input('Estado_CuotaID', sql.Int, Estado_CuotaID || 2) // Valor por defecto: 2
+          .execute('nodo.SP_ObtenerCuotasPorEstadoYSolicitud');
+
+      // Verificar si se obtuvieron resultados
+      if (result.recordset.length === 0) {
+          return res.status(404).json({ message: 'No se encontraron cuotas para los criterios especificados.' });
+      }
+
+      // Enviar los resultados en la respuesta
+      res.json(result.recordset);
+  } catch (error) {
+      // Manejo de errores de SQL Server
+      res.status(500).json({
+          error: `Error al consultar las cuotas: ${error.message}`
+      });
+  }
+};
   

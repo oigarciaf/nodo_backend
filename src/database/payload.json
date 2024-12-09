@@ -126,6 +126,25 @@ post = http://localhost:8000/api/loanRequest/crear-solicitud
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes <-- solicitudes pendientes
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes/70 <-- enviamos usuarioId
 
+
+===============================================================================
+SOLICITUDES Y CUOTAS
+===============================================================================
+post = http://localhost:8000/api/loanRequest/crear-cuotas
+
+{
+  "monto": 10000.00,
+  "tasa": 5.5,
+  "plazo": 12,
+  "estado_aprobacionid": 1, 
+  "tipo_prestamoid": 1,
+  "usuarioId": 79,
+  "prestamistaId": 55
+}
+
+
+
+
 ===============================================================================
 Oferta
 ===============================================================================

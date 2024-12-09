@@ -279,3 +279,36 @@ exports.payLoanInstallment = async (req, res) => {
 };
 
   
+
+
+
+exports.getInstallmentsByRequest = async (req, res) => {
+  try {
+    const { SolicitudID } = req.params; // Obtener el parámetro de la solicitud (SolicitudID)
+
+    if (!SolicitudID) {
+      return res.status(400).json({ error: 'SolicitudID es requerido.' });
+    }
+
+    // Conectar a la base de datos y ejecutar el procedimiento almacenado
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('SolicitudID', sql.Int, SolicitudID) // Enviar el parámetro al procedimiento
+      .execute('nodo.SP_ObtenerCuotasPorSolicitud'); // Nombre del procedimiento almacenado
+
+    // Enviar los resultados en la respuesta
+    res.json(result.recordset);
+  } catch (error) {
+    // Manejo de errores de SQL Server
+    res.status(500).json({ 
+      error: `Error al consultar las cuotas por solicitud: ${error.message}` 
+    });
+  }
+};
+
+
+
+
+
+
+

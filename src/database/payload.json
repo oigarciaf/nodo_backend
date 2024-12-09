@@ -130,6 +130,7 @@ get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes/70 <-- 
 ===============================================================================
 SOLICITUDES Y CUOTAS
 ===============================================================================
+get = http://localhost:8000/api/loanRequest/obtener-cuotas/32 <-- enviamos SolicitudID 
 post = http://localhost:8000/api/loanRequest/crear-cuotas
 
 {

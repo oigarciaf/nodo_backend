@@ -235,4 +235,47 @@ exports.getLoanInstallmentsByStatusAndRequest = async (req, res) => {
       });
   }
 };
+
+exports.payLoanInstallment = async (req, res) => {
+  try {
+      // Obtener datos del cuerpo de la solicitud (body)
+      const { CuotaPrestamoID, MontoTransaccion, UsuarioID } = req.body;
+
+      // Validar que todos los parámetros necesarios estén presentes
+      if (!CuotaPrestamoID || !MontoTransaccion || !UsuarioID) {
+          return res.status(400).json({
+              error: 'Todos los campos son obligatorios: CuotaPrestamoID, MontoTransaccion, UsuarioID.'
+          });
+      }
+
+      // Conectar a la base de datos
+      const pool = await sql.connect();
+
+      // Ejecutar el procedimiento almacenado
+      const result = await pool.request()
+          .input('CuotaPrestamoID', sql.Int, CuotaPrestamoID)
+          .input('MontoTransaccion', sql.Decimal(18, 2), MontoTransaccion)
+          .input('UsuarioID', sql.Int, UsuarioID)
+          .execute('nodo.SP_PagarCuota'); // Nombre del procedimiento almacenado
+
+      // Verificar si se devolvió un error desde el procedimiento
+      if (result.recordset && result.recordset[0]?.ErrorNumber) {
+          return res.status(400).json({
+              error: `Error desde el procedimiento: ${result.recordset[0].ErrorMessage}`
+          });
+      }
+
+      // Enviar la respuesta con los datos del recibo generado
+      res.json({
+          message: 'Pago registrado exitosamente.',
+          recibo: result.recordset[0], // Datos del recibo generado
+      });
+  } catch (error) {
+      // Manejo de errores generales
+      res.status(500).json({
+          error: `Error al procesar el pago de la cuota: ${error.message}`
+      });
+  }
+};
+
   

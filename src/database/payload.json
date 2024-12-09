@@ -148,6 +148,15 @@ post = http://localhost:8000/api/loanRequest/obtener-cuotas
   "Estado_CuotaID": 2   
 }
 
+/*Pago de una Cuotas*/
+
+post = http://localhost:8000/api/loanRequest/realizar-pago
+
+{
+  "CuotaPrestamoID": 27,
+  "MontoTransaccion": 458.33,
+  "UsuarioID": 33
+}
 
 ===============================================================================
 Oferta

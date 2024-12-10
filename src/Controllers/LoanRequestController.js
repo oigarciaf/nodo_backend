@@ -329,6 +329,41 @@ exports.getReceiptByInstallment = async (req, res) => {
 };
 
 
+exports.getLoanRequestsByLender = async (req, res) => {
+  const { prestamistaId } = req.params;
+
+  // Validación básica del ID del prestamista
+  if (!prestamistaId || isNaN(prestamistaId)) {
+    return res.status(400).json({ error: 'ID de prestamista inválido' });
+  }
+
+  try {
+    // Conectar a la base de datos y ejecutar el procedimiento almacenado
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('PrestamistaID', sql.Int, prestamistaId)
+      .execute('nodo.SP_Obtener_Solicitudes_Por_Prestamista');
+
+    // Comprobar si se encontraron solicitudes
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron solicitudes para el prestamista especificado' });
+    }
+
+    // Devolver las solicitudes en la respuesta
+    res.json({
+      success: true,
+      data: result.recordset
+    });
+  } catch (error) {
+    // Manejo de errores de SQL Server
+    res.status(500).json({
+      success: false,
+      message: 'Error al consultar las solicitudes de préstamo',
+      error: error.message
+    });
+  }
+};
+
 
 
 

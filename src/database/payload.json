@@ -125,7 +125,7 @@ post = http://localhost:8000/api/loanRequest/crear-solicitud
 
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes <-- solicitudes pendientes
 get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes/70 <-- enviamos usuarioId
-
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-prestamista/55 <--  enviamos prestamistaId
 
 ===============================================================================
 SOLICITUDES Y CUOTAS

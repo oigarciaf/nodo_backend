@@ -350,10 +350,9 @@ exports.getLoanRequestsByLender = async (req, res) => {
     }
 
     // Devolver las solicitudes en la respuesta
-    res.json({
-      success: true,
-      data: result.recordset
-    });
+    res.json(
+       result.recordset
+    );
   } catch (error) {
     // Manejo de errores de SQL Server
     res.status(500).json({

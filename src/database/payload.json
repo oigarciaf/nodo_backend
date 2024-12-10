@@ -135,13 +135,9 @@ get = http://localhost:8000/api/loanRequest/obtener-recibo/27 <-- enviamos Cuota
 post = http://localhost:8000/api/loanRequest/crear-cuotas
 
 {
-  "monto": 10000.00,
-  "tasa": 5.5,
-  "plazo": 12,
-  "estado_aprobacionid": 1, 
-  "tipo_prestamoid": 1,
-  "usuarioId": 79,
-  "prestamistaId": 55
+  "solicitudId": 33,
+  "usuarioId": 55,
+  "prestamistaId": 79
 }
 /* Cuotas por pagar de un prestamo*/
 post = http://localhost:8000/api/loanRequest/obtener-cuotas

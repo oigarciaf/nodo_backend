@@ -160,49 +160,46 @@ exports.getLoanRequestById = async (req, res) => {
 
 
 
-exports.insertLoanRequestWithInstallments = async (req, res) => {
-  const { monto, tasa, plazo, estado_aprobacionid, tipo_prestamoid, usuarioId, prestamistaId } = req.body;
-
-  // Validaciones de entrada
-  if (!monto || !tasa || !plazo || !estado_aprobacionid || !tipo_prestamoid || !usuarioId) {
-    return res.status(400).json({ error: 'Todos los campos obligatorios deben estar completos' });
-  }
-
-  try {
-    // Conectar a la base de datos
-    const pool = await sql.connect();
-
-    // Ejecutar el procedimiento almacenado
-    const result = await pool.request()
-      .input('Monto', sql.Decimal(18, 2), monto)
-      .input('Tasa', sql.Decimal(5, 2), tasa)
-      .input('Plazo', sql.Int, plazo)
-      .input('Estado_AprobacionID', sql.Int, estado_aprobacionid)
-      .input('Tipo_PrestamoID', sql.Int, tipo_prestamoid)
-      .input('UsuarioID', sql.Int, usuarioId)
-      .input('PrestamistaID', sql.Int, prestamistaId || null)
-      .execute('nodo.SP_InsertarSolicitudPrestamoYCuotas');
-
-    // Verificar si hubo errores en el procedimiento almacenado
-    if (result.recordset && result.recordset[0].ErrorNumber) {
-      throw new Error(result.recordset[0].ErrorMessage);
+  exports.insertLoanRequestWithInstallments = async (req, res) => {
+    const { solicitudId, usuarioId, prestamistaId } = req.body;
+  
+    // Validaciones de entrada
+    if (!solicitudId || !usuarioId) {
+      return res.status(400).json({ error: 'El SolicitudID y UsuarioID son obligatorios' });
     }
-
-    // Devolver una respuesta exitosa
-    res.status(201).json({
-      success: true,
-      solicitudId: result.recordset[0].SolicitudID,
-      message: 'Solicitud de préstamo y cuotas creadas exitosamente'
-    });
-  } catch (error) {
-    // Manejar errores de SQL Server
-    res.status(400).json({
-      success: false,
-      message: 'Error al crear la solicitud de préstamo y cuotas',
-      error: error.message
-    });
-  }
-};
+  
+    try {
+      // Conectar a la base de datos
+      const pool = await sql.connect();
+  
+      // Ejecutar el procedimiento almacenado
+      const result = await pool.request()
+        .input('SolicitudID', sql.Int, solicitudId)
+        .input('UsuarioID', sql.Int, usuarioId)
+        .input('PrestamistaID', sql.Int, prestamistaId || null)  // Si no hay prestamista, se asigna NULL
+        .execute('nodo.SP_InsertarSolicitudPrestamoYCuotas');
+  
+      // Verificar si hubo errores en el procedimiento almacenado
+      if (result.recordset && result.recordset[0].ErrorNumber) {
+        throw new Error(result.recordset[0].ErrorMessage);
+      }
+  
+      // Devolver una respuesta exitosa
+      res.status(201).json({
+        success: true,
+        solicitudId: result.recordset[0].SolicitudID,
+        message: 'Solicitud de préstamo y cuotas creadas exitosamente'
+      });
+    } catch (error) {
+      // Manejar errores de SQL Server
+      res.status(400).json({
+        success: false,
+        message: 'Error al crear la solicitud de préstamo y cuotas',
+        error: error.message
+      });
+    }
+  };
+  
 
 
 exports.getLoanInstallmentsByStatusAndRequest = async (req, res) => {

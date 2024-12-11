@@ -364,5 +364,38 @@ exports.getLoanRequestsByLender = async (req, res) => {
 };
 
 
+exports.getLoanRequestsByUser = async (req, res) => {
+  const { usuarioId } = req.params;
+
+  // Validación básica del ID del usuario
+  if (!usuarioId || isNaN(usuarioId)) {
+    return res.status(400).json({ error: 'ID de usuario inválido' });
+  }
+
+  try {
+    // Conectar a la base de datos y ejecutar el procedimiento almacenado
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('UsuarioID', sql.Int, usuarioId)
+      .execute('nodo.SP_Obtener_Solicitudes_Por_Usuario');
+
+    // Comprobar si se encontraron solicitudes
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron solicitudes para el usuario especificado' });
+    }
+
+    // Devolver las solicitudes en la respuesta
+    res.json(result.recordset);
+  } catch (error) {
+    // Manejo de errores de SQL Server
+    res.status(500).json({
+      success: false,
+      message: 'Error al consultar las solicitudes de préstamo',
+      error: error.message
+    });
+  }
+};
+
+
 
 

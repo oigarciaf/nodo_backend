@@ -130,6 +130,7 @@ get = http://localhost:8000/api/loanRequest/obtener-solicitud-prestamista/55 <--
 ===============================================================================
 SOLICITUDES Y CUOTAS
 ===============================================================================
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-usuario/81 <-- enviamos usuarioId
 get = http://localhost:8000/api/loanRequest/obtener-cuotas/32 <-- enviamos SolicitudID 
 get = http://localhost:8000/api/loanRequest/obtener-recibo/27 <-- enviamos CuotaPrestamoID
 post = http://localhost:8000/api/loanRequest/crear-cuotas

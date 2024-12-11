@@ -22,5 +22,6 @@ router.post('/realizar-pago', loanRequest.payLoanInstallment);
 router.get('/obtener-cuotas/:SolicitudID', loanRequest.getInstallmentsByRequest);
 router.get('/obtener-recibo/:CuotaPrestamoID', loanRequest.getReceiptByInstallment);
 router.get('/obtener-solicitud-prestamista/:prestamistaId', loanRequest.getLoanRequestsByLender);
+router.get('/obtener-solicitud-usuario/:usuarioId', loanRequest.getLoanRequestsByUser);
 
 module.exports = router;

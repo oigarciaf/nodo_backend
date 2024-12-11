@@ -20,7 +20,7 @@ router.post('/crear-cuotas', loanRequest.insertLoanRequestWithInstallments);
 router.post('/obtener-cuotas', loanRequest.getLoanInstallmentsByStatusAndRequest);
 router.post('/realizar-pago', loanRequest.payLoanInstallment);
 router.get('/obtener-cuotas/:SolicitudID', loanRequest.getInstallmentsByRequest);
-router.get('/obtener-recibo/:CuotaPrestamoID', loanRequest.getReceiptByInstallment);
+router.post('/obtener-recibo', loanRequest.getReceiptByInstallment);
 router.get('/obtener-solicitud-prestamista/:prestamistaId', loanRequest.getLoanRequestsByLender);
 router.get('/obtener-solicitud-usuario/:usuarioId', loanRequest.getLoanRequestsByUser);
 

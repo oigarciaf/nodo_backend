@@ -306,7 +306,7 @@ exports.getInstallmentsByRequest = async (req, res) => {
 
 exports.getReceiptByInstallment = async (req, res) => {
   try {
-    const { CuotaPrestamoID } = req.params; // Obtener el parámetro de la solicitud (CuotaPrestamoID)
+    const { CuotaPrestamoID } = req.body; // Obtener el ID desde el cuerpo de la solicitud
 
     if (!CuotaPrestamoID) {
       return res.status(400).json({ error: 'CuotaPrestamoID es requerido.' });

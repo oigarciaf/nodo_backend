@@ -157,6 +157,12 @@ post = http://localhost:8000/api/loanRequest/realizar-pago
   "UsuarioID": 33
 }
 
+post = http://localhost:8000/api/loanRequest/obtener-recibo
+
+{
+  "CuotaPrestamoID": 27
+}
+
 ===============================================================================
 Oferta
 ===============================================================================

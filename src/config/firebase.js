@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 require('dotenv').config();
 
-const serviceAccount = require('../secrets/admin-firebasesdk.json');
+//const serviceAccount = require('../secrets/admin-firebasesdk.json');
 
 const serviceAccountFromEnv = {
   type: process.env.FIREBASE_TYPE,
@@ -21,7 +21,8 @@ const serviceAccountFromEnv = {
 
 if(!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount || serviceAccountFromEnv)
+   // credential: admin.credential.cert(serviceAccount || serviceAccountFromEnv)
+    credential: admin.credential.cert(serviceAccountFromEnv)
   })
 }
 

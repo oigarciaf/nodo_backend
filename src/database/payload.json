@@ -1,0 +1,201 @@
+/**Reistro*/
+
+post =  http://localhost:8000/api/user/login
+
+{
+    "email":"junior.vaca@unah.hn",
+   "password" :"Junior@2412"
+    
+  }
+
+post = http://localhost:8000/api/user/register
+
+{
+  "email": "hilixay132@regishub.com",
+  "password": "Junior@2412",
+  "nombre_completo": "Junior",
+  "apellido_completo":"garcia",
+  "fecha_nacimiento":"1997-02-25"
+ }
+
+ post = http://localhost:8000/api/user/verify
+ {
+  "email":"hilixay132@regishub.com",
+  "verificationCode":"603A9E"
+}
+
+ /* TL_Ocupaciones */
+
+get = http://localhost:8000/api/ocupation/obtener-ocupaciones
+getById = http://localhost:8000/api/ocupation/obtener-ocupacion/2   <-- enviamos ocupacionId
+post = http://localhost:8000/api/ocupation/guardar-ocupacion
+
+{
+  "nombre": "Analista de Datos",
+  "descripcion": "Encargado de analizar e interpretar datos para apoyar la toma de decisiones."
+}
+
+put = http://localhost:8000/api/ocupation/actualizar-ocupacion/5   <-- enviamos ocupacionId
+
+{
+  "nombre": "Mecanico automotriz",
+  "descripcion": "Encargado de reparar y dar mantenimiento a vehiculos."
+}
+
+delete = http://localhost:8000/api/ocupation/eliminar-ocupacion/5   <-- enviamos ocupacionId
+
+/* TL_Tipo_Prestamo */
+
+get = http://localhost:8000/api/loanType/obtener-tipo-prestamo
+getById = http://localhost:8000/api/loanType/obtener-tipo-prestamo/1   <-- enviamos tipo_PrestamoID
+post = http://localhost:8000/api/loanType/guardar-tipo-prestamo
+
+{
+  "nombre": "Préstamo Hipotecario",
+  "descripcion": "Préstamo para la compra de viviendas y terrenos"
+}
+
+put = http://localhost:8000/api/loanType/actualizar-tipo-prestamo/4   <-- enviamos tipo_PrestamoID
+
+{
+  "nombre": "Préstamo Estudiantil",
+  "descripcion": "Préstamo para estudiantes"
+}
+
+delete = http://localhost:8000/api/loanType/eliminar-tipo-prestamo/4   <-- enviamos tipo_PrestamoID
+
+/*  TL_Estado_Aprobacion */
+
+get = http://localhost:8000/api/approvalStatus/obtener-estado-aprobacion
+getById = http://localhost:8000/api/approvalStatus/obtener-estado-aprobacion/2    <-- enviamos estado_aprobacion_id
+
+post = http://localhost:8000/api/approvalStatus/guardar-estado-aprobacion
+
+{
+  "nombre": "Rechazado",
+  "descripcion": "El estado indica que la solicitud ha sido rechazada"
+}
+
+put = http://localhost:8000/api/approvalStatus/actualizar-estado-aprobacion/4    <-- enviamos estado_aprobacion_id
+
+{
+  "nombre": "Pendiente",
+  "descripcion": "El estado indica que la solicitud ha sido rechazada"
+}
+
+delete = http://localhost:8000/api/approvalStatus/eliminar-estado-aprobacion/4   <-- enviamos estado_aprobacion_id
+
+/* TL_Estado_Cuotas */
+
+get = http://localhost:8000/api/quotaStatus/obtener-estado-cuota
+getById = http://localhost:8000/api/quotaStatus/obtener-estado-cuota/1   <-- enviamos estadoCuotaID
+
+post = http://localhost:8000/api/quotaStatus/guardar-estado-cuota
+
+{
+  "nombre": "Pagado",
+  "descripcion": "Indica que la cuota ha sido pagada completamente"
+}
+
+put = http://localhost:8000/api/quotaStatus/actualizar-estado-cuota/4    <-- enviamos estadoCuotaID
+
+{
+  "nombre": "Pendiente",
+  "descripcion": "Indica que la cuota está pendiente y no ha sido pagada en la fecha acordada"
+}
+
+delete = http://localhost:8000/api/quotaStatus/eliminar-estado-cuota/4   <-- enviamos estadoCuotaID
+
+
+/* TL_SolicitudesPrestamos */
+get = http://localhost:8000/api/loanRequest/obtener-solicitud/3  <-- enviamos solicitudId
+get = http://localhost:8000/api/loanRequest/obtener-solicitud
+post = http://localhost:8000/api/loanRequest/crear-solicitud
+
+{
+  "monto": 10000.00,
+  "tasa": 3.50,
+  "plazo": 24,
+  "saldo_pendiente": 10000.00,
+  "estado_aprobacionid": 1,
+  "tipo_prestamoid": 1,
+  "usuarioId": 70,
+  "prestamistaId": 68
+}
+
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes <-- solicitudes pendientes
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-pendientes/70 <-- enviamos usuarioId
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-prestamista/55 <--  enviamos prestamistaId
+
+===============================================================================
+SOLICITUDES Y CUOTAS
+===============================================================================
+get = http://localhost:8000/api/loanRequest/obtener-solicitud-usuario/81 <-- enviamos usuarioId
+get = http://localhost:8000/api/loanRequest/obtener-cuotas/32 <-- enviamos SolicitudID 
+get = http://localhost:8000/api/loanRequest/obtener-recibo/27 <-- enviamos CuotaPrestamoID
+post = http://localhost:8000/api/loanRequest/crear-cuotas
+
+{
+  "solicitudId": 33,
+  "usuarioId": 55,
+  "prestamistaId": 79
+}
+/* Cuotas por pagar de un prestamo*/
+post = http://localhost:8000/api/loanRequest/obtener-cuotas
+{
+  "SolicitudID": 32,
+  "Estado_CuotaID": 2   
+}
+
+/*Pago de una Cuotas*/
+
+post = http://localhost:8000/api/loanRequest/realizar-pago
+
+{
+  "CuotaPrestamoID": 27,
+  "MontoTransaccion": 458.33,
+  "UsuarioID": 33
+}
+
+post = http://localhost:8000/api/loanRequest/obtener-recibo
+
+{
+  "CuotaPrestamoID": 27
+}
+
+===============================================================================
+Oferta
+===============================================================================
+
+post = http://localhost:8000/api/loanOffer/crear-oferta
+
+    {
+      "monto": 1000.25,
+      "tasa": 10.5,
+      "plazo": 12,
+      "solicitudId": 28,
+      "prestamistaId": 33
+    }
+
+put = http://localhost:8000/api/loanOffer/actualizar/9
+
+      {
+        "OfertaID":"9",
+        "monto": 1000.25,
+        "tasa": 10.5,
+        "plazo": 12,
+        "solicitudId": 28,
+        "prestamistaId": 33,
+        "estadoAprobacionId": 2
+        
+      }
+
+
+get = http://localhost:8000/api/loanOffer/ofertas     todas las  ofertas
+get = http://localhost:8000/api/loanOffer/ofertas/9    <-- ofertas por id
+get = http://localhost:8000/api/loanOffer/ofertas/estado/2  <-- ofertas por estado
+get = http://localhost:8000/api/loanOffer/ofertas/prestamista/33 ofertas por usuario prestamista
+
+
+
+

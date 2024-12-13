@@ -1,0 +1,21 @@
+#src/release/
+# Construir la imagen Docker para la arquitectura de Azure
+docker buildx build --platform linux/amd64 -t nodo-api-dev:latest . --load
+
+# Ejecutar el contenedor localmente para pruebas
+docker rm my-express-container
+docker run -d -p 8000:8000 --name my-express-container  --env-file .env nodo-api-dev:latest
+
+# Iniciar sesión en Azure
+az login
+
+# Iniciar sesión en Azure Container Registry (ACR)
+az acr login --name acrnododev
+
+# Etiquetar la imagen para subirla al registro
+docker tag nodo-api-dev:latest acrnododev.azurecr.io/nodo-api-dev:latest
+docker tag nodo-api-dev:latest acrnododev.azurecr.io/nodo-api-dev:0.1.2
+
+# Subir las imágenes al registro
+docker push acrnododev.azurecr.io/nodo-api-dev:latest
+docker push acrnododev.azurecr.io/nodo-api-dev:0.1.2

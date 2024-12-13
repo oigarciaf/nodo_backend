@@ -3,13 +3,10 @@ const validator = require('validator');
 
 class UserRegister {
   constructor(data) {
-    this.id_rol = data.id_rol;
-    this.primer_nombre = data.primer_nombre;
-    this.segundo_nombre = data.segundo_nombre;
-    this.primer_apellido = data.primer_apellido;
-    this.segundo_apellido = data.segundo_apellido;
+    this.nombre_completo = data.nombre_completo;
+    this.apellido_completo = data.apellido_completo;
+    this.fecha_nacimiento = data.fecha_nacimiento
     this.email = data.email;
-    this.telefono = data.telefono;
     this.password = data.password;
   }
 
@@ -17,17 +14,26 @@ class UserRegister {
     const errors = [];
 
     // Validación de campos requeridos
-    if (!this.id_rol) errors.push('id_rol is required');
-    if (!this.primer_nombre) errors.push('primer_nombre is required');
-    if (!this.primer_apellido) errors.push('primer_apellido is required');
+    if (!this.nombre_completo) errors.push('nombre_completo is required');
+    if (!this.apellido_completo) errors.push('apellido_completo is required');
+    if (!this.fecha_nacimiento) errors.push('fecha_ nacimiento es requerido')
     if (!this.email) errors.push('email is required');
-    if (!this.telefono) errors.push('telefono is required');
     if (!this.password) errors.push('password is required');
-
+    
     // Validación de email
     if (!validator.isEmail(this.email)) {
       errors.push('Invalid email address');
     }
+
+
+      // Validación de nombre completo y apellido completo
+      if (this.nombre_completo && this.nombre_completo.length < 2) {
+        errors.push('nombre_completo must be at least 2 characters long');
+      }
+      if (this.apellido_completo && this.apellido_completo.length < 2) {
+        errors.push('apellido_completo must be at least 2 characters long');
+      }
+      
 
     // Validación de contraseña
     if (this.password) {
